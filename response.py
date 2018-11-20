@@ -1,10 +1,13 @@
 import urllib.request
 import os
 import magic
-import cv2
 import socket
 from time import sleep      
 import threading as td
+import subprocess
+//to find file type (MIME TYPE)
+m=magic.open(magic.MAGIC_NONE)
+m.load()
 
 true = True
 
@@ -21,7 +24,7 @@ def internet(host="8.8.8.8", port=53, timeout=3):
 
 def json_response():
     try:
-        url = "http://192.168.204.57:9012/download"
+        url = "http://115.111.91.5:9012/download"
         response = urllib.request.urlopen(url)
         data = response.read()
         dat = eval(data.decode('ascii'))
@@ -50,7 +53,7 @@ def downloading():
         os.chdir(path)
         for obj in asset:
             assetid = obj['id']
-            url1 = "http://192.168.204.57:9012/fetching_asset/" + str(assetid)
+            url1 = "http://115.111.91.5:9012/fetching_asset/" + str(assetid)
             name = obj['name']
             active_asset.append(name)
             duration = obj['duration']
@@ -88,12 +91,16 @@ def Assetplay():
     if os.listdir():
         name = os.listdir()
         for image in name:
-            if 'image' in magic.from_file(image):  # to check type of file 'I'/'V'
-                subprocess.Popen("feh -q -p -Z -F -R 60 -Y "+image,shell=True)
+            if 'image' in m.file(image):  # to check type of file 'I'/'V'
+                subprocess.Popen("feh -q -p -Z -F -R 60 -Y "+image+" &",shell=True)
+                subprocess.Popen("export pid=$!",shell=True)
                 sleep(15)
+                subprocess.Popen("kill $pid",shell=True)                
             else:
                 subprocess.Popen('omxplayer ' + image,shell=True)
         if internet():
+            downloading()
+            delete_other()
             displayer()
         else:
             Assetplay()
@@ -101,14 +108,16 @@ def Assetplay():
         path = "/home/pi/innosignage/default"
         os.chdir(path)
         for i in fixedfiles:
-            subprocess.Popen("feh -q -p -Z -F -R 60 -Y "+image[0],shell=True)
-            sleep(15)
+            subprocess.Popen("feh -q -p -Z -F -R 60 -Y "+i+" &",shell=True)
+            subprocess.Popen("export pid=$!",shell=True)
+            sleep(15) 
+            subprocess.Popen("kill $pid",shell=True)
         if internet():
+            downloading()
+            delete_other()
             displayers()
         else:
             Assetplay()
-
-import subprocess
 
 def displayer():
     path = "/home/pi/innosignage/media"
@@ -126,9 +135,11 @@ def displayer():
                     else:
                         Assetplay()
                     for image in l_duration:
-                        if 'image' in magic.from_file(image[0]):  # to check type of file 'I'/'V'
-                            subprocess.Popen("feh -q -p -Z -F -R 60 -Y "+image[0],shell=True)
+                        if 'image' in m.file(image[0]):  # to check type of file 'I'/'V'
+                            subprocess.Popen("feh -q -p -Z -F -R 60 -Y "+image[0]+" &",shell=True)
+                            subprocess.Popen("export pid=$!",shell=True)
                             sleep(image[1])
+                            subprocess.Popen("kill $pid",shell=True)
                         else:
                             subprocess.Popen('omxplayer ' + image[0])
                 else:
