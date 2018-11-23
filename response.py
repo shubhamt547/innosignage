@@ -88,6 +88,8 @@ fixedfiles = ['welcome.png', 'noconnection.png']
 def Assetplay():
     path = "/home/pi/innosignage/media"
     os.chdir(path)
+    global asset
+    global l_duration
     if os.listdir():
         name = os.listdir()
         for image in name:
@@ -99,6 +101,8 @@ def Assetplay():
             else:
                 subprocess.Popen('omxplayer ' + image,shell=True)
         if internet():
+            asset.clear()
+            l_duration.clear()
             downloading()
             delete_other()
             displayer()
@@ -113,6 +117,8 @@ def Assetplay():
             sleep(15) 
             subprocess.Popen("kill $pid",shell=True)
         if internet():
+            asset.clear()
+            l_duration.clear()
             downloading()
             delete_other()
             displayers()
@@ -143,9 +149,13 @@ def displayer():
                         else:
                             subprocess.Popen('omxplayer ' + image[0])
                 else:
+                    asset.clear()
+                    l_duration.clear()
                     downloading()
                     delete_other()
             else:
+                asset.clear()
+                l_duration()
                 Assetplay()
         except Exception as e:
             print(e)
@@ -164,5 +174,5 @@ def main():
         displayer()
     else:
         Assetplay()
-
+        
 main()
