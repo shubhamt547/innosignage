@@ -5,7 +5,7 @@ import socket
 from time import sleep      
 import threading as td
 import subprocess
-//to find file type (MIME TYPE)
+##to find file type (MIME TYPE)
 m=magic.open(magic.MAGIC_NONE)
 m.load()
 
@@ -90,6 +90,8 @@ def Assetplay():
     os.chdir(path)
     global asset
     global l_duration
+    asset.clear()
+    l_duration.clear()
     if os.listdir():
         name = os.listdir()
         for image in name:
@@ -100,9 +102,8 @@ def Assetplay():
                 subprocess.Popen("kill $pid",shell=True)                
             else:
                 subprocess.Popen('omxplayer ' + image,shell=True)
+                sleep(15)
         if internet():
-            asset.clear()
-            l_duration.clear()
             downloading()
             delete_other()
             displayer()
@@ -117,8 +118,6 @@ def Assetplay():
             sleep(15) 
             subprocess.Popen("kill $pid",shell=True)
         if internet():
-            asset.clear()
-            l_duration.clear()
             downloading()
             delete_other()
             displayers()
@@ -148,6 +147,7 @@ def displayer():
                             subprocess.Popen("kill $pid",shell=True)
                         else:
                             subprocess.Popen('omxplayer ' + image[0])
+                            sleep(image[1])
                 else:
                     asset.clear()
                     l_duration.clear()
@@ -155,7 +155,7 @@ def displayer():
                     delete_other()
             else:
                 asset.clear()
-                l_duration()
+                l_duration.clear()
                 Assetplay()
         except Exception as e:
             print(e)
